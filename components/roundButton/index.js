@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Image, StyleSheet } from 'react-native';
 import { parentSize } from '../../values/dimn';
-
+import theme from '../../values/theme';
+import THEME from '../../values/theme';
 
 
 
@@ -19,9 +20,9 @@ export default (props) => {
 
 const styles = StyleSheet.create({
         wrapper: {
-                height: 70,
-                width: 70,
-                borderRadius: 35,
+                height: THEME.roundButton.buttonSize,
+                width: THEME.roundButton.buttonSize,
+                borderRadius: THEME.roundButton.buttonSize/2,
         },
         img: {
                 height: parentSize,

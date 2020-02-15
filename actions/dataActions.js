@@ -4,5 +4,12 @@ export default {
                         type: 'addNoteAction',
                         payload: note
                 }
+        },
+        editNoteAction: function (...payload) {
+                const [index, note] = payload;
+                return {
+                        type: 'editNoteAction',
+                        payload: {index, note}
+                }
         }
 }

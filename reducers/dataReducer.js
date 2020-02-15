@@ -10,7 +10,10 @@ const initialState = {
 export  default (state = initialState, action) => {
         switch (action.type) {
                 case 'addNoteAction': 
-                        return {...state, notes: [...state.notes, action.payload]}
+                        return {...state, notes: [...state.notes, action.payload]};
+                case 'editNoteAction':
+                        state.notes[action.payload.index] = action.payload.note;
+                        return {...state}
                default: 
                         return {...state};
         }

@@ -9,14 +9,21 @@ import { connect } from 'react-redux';
 import actions from '../../actions/actions';
 
 const EditorScreen = (props)=> {
-const [header, setHeader] = useState(false);
-const [content, setContent] = useState('');
+        const editedNote = props.navigation.state.params;
+        
+        // HOOKS
+        const [header, setHeader] = useState(editedNote && editedNote.header ||"");
+        const [content, setContent] = useState(editedNote && editedNote.content ||"");
 
         const goGeneralScreen = () => {props.navigation.pop()}
 
         const addNewNote = () => {
                 props.addNoteAction(new Note({header, content, photo: null, date: new Date() }));
-                // console.log(new Note({header, content, photo: null, date: new Date() }));
+                goGeneralScreen();
+        }
+
+        const editCurrentNote = ()=> {
+                props.editNoteAction(editedNote.index, new Note({header, content, photo: null, date: editedNote.date}));
                 goGeneralScreen();
         }
 
@@ -35,6 +42,7 @@ const [content, setContent] = useState('');
                                 placeholderTextColor = {'dimgray'}
                                 style = {[styles.input, {fontSize: 24}]}
                                 onChangeText={(e) => {setHeader(e)}}
+                                defaultValue = {header}
                         />
                         <TextInput
                                 autoCapitalize = 'none'
@@ -43,6 +51,7 @@ const [content, setContent] = useState('');
                                 style = {[styles.input, {fontSize: 20}]}
                                 multiline
                                 onChangeText={(e) => {setContent(e)}}
+                                defaultValue = {content}
                         />
                 </View>
                 <View style = {styles.buttonPannel}>
@@ -55,7 +64,7 @@ const [content, setContent] = useState('');
                                 <RoundButton img = {require('../../assets/camera.png')}/>
                         </TouchableOpacity>
                         <TouchableOpacity  activeOpacity={0.5}
-                        onPress = {addNewNote}>
+                        onPress = {editedNote ? editCurrentNote : addNewNote}>
                                 <RoundButton img = {require('../../assets/yes.png')}/>
                         </TouchableOpacity>
                 </View>
