@@ -1,17 +1,40 @@
-        import React , {useState} from 'react';
-        import {ScrollView, ImageBackground,  StyleSheet, TouchableOpacity} from 'react-native';
+        import React , {useState, useRef} from 'react';
+        import {ScrollView, 
+                ImageBackground,  
+                StyleSheet, 
+                TouchableOpacity, 
+                Animated,
+                LayoutAnimation} from 'react-native';
         import NoteBox from '../noteBox/index';
         import THEME from '../../values/theme';
         import RoundButton from '../roundButton';
         import screenNames from '../../navigation/screenNames';
         import { connect } from 'react-redux';
         import actions from '../../actions/actions';
+        import {translate} from './anim';
         
         const GeneralScreen =  (props) => {
+                //animation
+                const topEditButton = useRef(new Animated.Value(- THEME.roundButton.buttonSize)).current;
+                const topDeleteButton = useRef(new Animated.Value(- THEME.roundButton.buttonSize)).current;
+                LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+
                 // hooks
                 const [editIndex, setEditIndex] = useState(false);
-                const setEdit = (index) => {setEditIndex(index)};
-                const unsetEdit = () => {setEditIndex(false)};
+                const setEdit = (index) => {
+                        setEditIndex(index); 
+                        translate(topEditButton, 30 + THEME.roundButton.buttonSize, THEME.roundButton.anim);
+                        translate(topDeleteButton, 45 + THEME.roundButton.buttonSize *2, THEME.roundButton.anim)
+                };
+                const unsetEdit = () => {
+                        setEditIndex(false);
+                        translate(topEditButton, 
+                                - THEME.roundButton.buttonSize, 
+                                THEME.roundButton.anim);
+                        translate(topDeleteButton, 
+                                - THEME.roundButton.buttonSize, 
+                                THEME.roundButton.anim);
+                };
 
                 //methods
                 const goToEditor = ()=> {props.navigation.push(screenNames.editor)}
@@ -40,6 +63,10 @@
                         });
                         unsetEdit();
                 };
+                const deleteNote = () => {
+                        props.deleteNoteAction(editIndex);
+                        unsetEdit();
+                }
 
                 // render
                 return (
@@ -52,32 +79,31 @@
                         <ScrollView>
                                 {renderNotes()}
                         </ScrollView>
-                <TouchableOpacity 
-                        activeOpacity={0.5}
-                        style = {styles.activeButton}
-                        onPress={goToEditor}
-                        >
-                        <RoundButton img={THEME.actionButton.img}/>
-                </TouchableOpacity>
+                        <TouchableOpacity 
+                                activeOpacity={0.5}
+                                style = {styles.activeButton}
+                                onPress={goToEditor}
+                                >
+                                <RoundButton img={THEME.actionButton.img}/>
+                        </TouchableOpacity>
 
-                { editIndex !== false && (
-                <TouchableOpacity 
-                        activeOpacity={0.5}
-                        style = {styles.editButton}
-                        onPress={sentNoteToEditor}
-                        >
+                        <Animated.View style = {[styles.editButton, {bottom: topEditButton}]}>
+                                <TouchableOpacity 
+                                activeOpacity={0.5}
+                                onPress={sentNoteToEditor}
+                                >
                                 <RoundButton img={THEME.editButton.img} />
-                </TouchableOpacity>
-                )}
-                { editIndex !== false && (
-                <TouchableOpacity 
-                        activeOpacity={0.5}
-                        style = {styles.deleteButton}
-                        onPress={goToEditor}
-                        >
-                                <RoundButton img={THEME.deleteButton.img} />
-                </TouchableOpacity>
-                 )}
+                                </TouchableOpacity>
+                        </Animated.View>
+                        <Animated.View style = {[styles.deleteButton, {bottom: topDeleteButton}]}>
+                                <TouchableOpacity 
+                                        activeOpacity={0.5}
+                                        onPress={deleteNote}
+                                        >
+                                        <RoundButton img={THEME.deleteButton.img} />
+                                </TouchableOpacity>
+                        </Animated.View>
+
                 </ImageBackground>)
 }
 
@@ -89,17 +115,18 @@ const styles = StyleSheet.create ({
         activeButton: {
                 position: 'absolute',
                 bottom: 15,
-                right: 30
+                right: 30,
+                elevation: 3,
         },
         editButton: {
                 position: 'absolute',
-                bottom: 30 + THEME.roundButton.buttonSize,
-                right: 30
+                right: 30,
+                elevation: 2
         },
         deleteButton: {
                 position: 'absolute',
-                bottom: 45 + THEME.roundButton.buttonSize * 2,
-                right: 30
+                right: 30,
+                elevation: 2
         }
 })
 

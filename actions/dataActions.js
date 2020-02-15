@@ -11,5 +11,11 @@ export default {
                         type: 'editNoteAction',
                         payload: {index, note}
                 }
+        },
+        deleteNoteAction: function (index) {
+                return {
+                        type: 'deleteNoteAction',
+                        payload: index
+                }
         }
 }

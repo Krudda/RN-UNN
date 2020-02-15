@@ -13,6 +13,7 @@ export default {
         },
         roundButton: {
                 buttonSize: 70,
+                anim: 300
         },
         actionButton: {
                 img: require('../assets/add.png')
